@@ -153,18 +153,30 @@ function productsStorage(){
     localStorage.setItem('car', JSON.stringify(carProducts))
 }
 
-function deleteProduct(e){
-    if(e.target.classList.contains('delete__product')){
-        const productId = e.target.getAttribute('data-id');
-        //* Tengo eliminar del array carProducts el producto con el ID que estamos guardando en productId.
-        carProducts = carProducts.filter(product => product.id !== productId);
+function deleteProduct(e) {
+    if (e.target.classList.contains('delete__product')) {
+      const productId = e.target.getAttribute('data-id');
+      // Buscar el producto correspondiente en el array carProducts
+      const product = carProducts.find(product => product.id === productId);
+      if (product) {
+        // Disminuir la cantidad del producto en 1 unidad
+        product.quantity--;
+        // Si la cantidad del producto llega a 0, eliminar el producto del carrito
+        if (product.quantity <= 0) {
+          const index = carProducts.findIndex(p => p.id === productId);
+          carProducts.splice(index, 1);
+        }
+        // Actualizar la lista de productos en el HTML y el contador de productos
         carElementsHTML();
+        counterProducts.innerText = carProducts.length;
+      }
     }
-}
+  }
 
 function emptyCar(){
     carList.innerHTML = "";
     carProducts = [];
+    productsStorage()
 }
 
 // //* Local Storage
@@ -172,7 +184,7 @@ function emptyCar(){
 // //* Guardar un valor en el Local Storage
 // localStorage.setItem('name', 'Alejandro')
 
-// //* Obtener un valor del Local Sotorage
+// //* Obtener un valor del Local Storage
 // localStorage.getItem('name')
 
 // const user = {
